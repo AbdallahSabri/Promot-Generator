@@ -94,7 +94,6 @@ export default function Home() {
         <ResultView
           category={category}
           answers={answers}
-          languages={languages}
           onBack={() => goToStep('questions')}
           onReset={reset}
         />

@@ -4,6 +4,8 @@ function resolveValue(
   value: AnswerValue | undefined,
   question: Question | undefined,
   language: Language,
+  answers?: Answers,
+  key?: string,
 ): string {
   if (value === undefined || value === null) return '';
 
@@ -28,7 +30,14 @@ function resolveValue(
   // single: resolve ID to localized option label
   if (question?.options) {
     const opt = question.options.find((o) => o.id === value);
-    if (opt) return opt.label[language];
+    if (opt) {
+      const label = opt.label[language];
+      if (value === 'text_only' && answers && key) {
+        const desc = answers[`${key}_description`] as string | undefined;
+        if (desc?.trim()) return `${label}: ${desc.trim()}`;
+      }
+      return label;
+    }
   }
 
   // text: raw input
@@ -39,7 +48,7 @@ export function assemblePrompt(category: Category, answers: Answers, language: L
   const questionMap = new Map(category.questions.map((q) => [q.id, q]));
   const template = category.templates[language];
   const raw = template.replace(/\{\{(\w+)\}\}/g, (_, key: string) =>
-    resolveValue(answers[key], questionMap.get(key), language),
+    resolveValue(answers[key], questionMap.get(key), language, answers, key),
   );
   // Collapse 3+ consecutive newlines to 2 so empty toggle/multi lines don't leave gaps
   return raw.replace(/\n{3,}/g, '\n\n').trim();

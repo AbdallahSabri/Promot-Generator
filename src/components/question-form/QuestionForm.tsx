@@ -124,6 +124,19 @@ export function QuestionForm({ category, language, initialAnswers = {}, onSubmit
                       <p className="text-xs text-slate-500">{description}</p>
                     ) : null;
                   })()}
+                  {answers[q.id] === 'text_only' && (
+                    <textarea
+                      rows={3}
+                      value={(answers[`${q.id}_description`] as string) ?? ''}
+                      onChange={(e) => set(`${q.id}_description`, e.target.value)}
+                      placeholder={
+                        language === 'ar'
+                          ? 'أدخل وصفًا نصيًا للمنتج…'
+                          : 'Describe the subject in detail…'
+                      }
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
+                  )}
                 </>
               )}
 
